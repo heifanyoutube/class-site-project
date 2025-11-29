@@ -1,0 +1,57 @@
+backend:
+  name: github
+  # ❗ 必須修改為：[您的GitHub使用者名稱]/[您的儲存庫名稱]
+  repo: your-username/your-repository-name 
+  branch: main # 內容將提交到 'main' 分支
+
+# 媒體（檔案上傳）設定
+media_folder: 'assets/uploads' # 上傳的檔案將存放在 assets/uploads/
+public_folder: '/assets/uploads' # 網站引用檔案的公開路徑
+
+# 內容集（Content Collections）：這裡定義管理員可以修改哪些內容
+collections:
+  # --- 1. 時間表和手冊數據 ---
+  - name: "schedule_data" 
+    label: "課程表與手冊數據" 
+    # 此設定將讓 CMS 編輯單一檔案，而非多個文件
+    files:
+      - file: "schedule.json" # CMS 會自動創建和更新這個 JSON 檔案
+        label: "每日課程與公告"
+        name: "daily_data"
+        fields:
+          - label: '所有 Day (1-7) 數據'
+            name: 'days'
+            widget: 'list' # 列表結構
+            summary: 'Day ID: {{fields.day_id}}'
+            fields:
+              - label: 'Day ID (例如: Day 1, Day 2)'
+                name: 'day_id'
+                widget: 'string'
+                pattern: ['^Day [1-7]$', '請確保格式為 Day 1 到 Day 7']
+                required: true
+              
+              - label: '每日手冊/公告 (列表)'
+                name: 'handbook'
+                widget: 'list'
+                required: false
+                field: { label: '公告內容', name: 'announcement', widget: 'string' }
+              
+              - label: '課程時間表 (列表)'
+                name: 'timetable'
+                widget: 'list'
+                required: false
+                fields:
+                  - { label: '節次', name: 'period', widget: 'string' }
+                  - { label: '時間', name: 'time', widget: 'string' }
+                  - { label: '科目', name: 'subject', widget: 'string' }
+                  - { label: '地點/備註', name: 'location', widget: 'string' }
+
+  # --- 2. 獨立手冊文件上傳 ---
+  - name: "document_upload" 
+    label: "獨立文件上傳"
+    folder: "assets/uploads/documents" # 文件實際存放在這裡
+    create: true
+    fields:
+      - { label: "文件標題", name: "title", widget: "string" }
+      - { label: "文件檔案", name: "file", widget: "file", allow_multiple: false }
+      - { label: "文件類型/備註", name: "type", widget: "string", required: false }
